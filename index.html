@@ -24,12 +24,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tab-pill[data-m="GSM"].active{background:#1a2e2a;color:#2dd4bf;border-color:#0d9488}
 .tab-pill[data-m="Be"].active{background:#2e1a1a;color:#f87171;border-color:#dc2626}
 /* seg tabs */
+.tab-pill[data-seg="All"].active{background:#1a1a2e;color:#c4b5fd;border-color:#7c3aed}
 .tab-pill[data-seg="NFPU"].active{background:#1a3a1a;color:#4ade80;border-color:#16a34a}
-.tab-pill[data-seg="Churn"].active{background:#3a0a0a;color:#f87171;border-color:#dc2626}
+.tab-pill[data-seg="Churn"].active{background:#0a2d14;color:#4ade80;border-color:#16a34a}
 .tab-pill[data-seg="Retain"].active{background:#0a1e3a;color:#60a5fa;border-color:#2563eb}
 .divider{height:1px;background:var(--border);margin-bottom:14px}
 /* Cards */
-.cards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 15px}
 .card-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px}
 .card-value{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:#f1f5f9}
@@ -108,8 +109,9 @@ tbody tr.hl td:first-child{color:var(--june)}
 
 <!-- Segment tabs -->
 <div class="tab-row" id="segTabs">
+  <button class="tab-pill" data-seg="All">All</button>
   <button class="tab-pill active" data-seg="NFPU">NFPU (New)</button>
-  <button class="tab-pill" data-seg="Churn">Churn</button>
+  <button class="tab-pill" data-seg="Churn">Resurrect</button>
   <button class="tab-pill" data-seg="Retain">Retain</button>
 </div>
 
@@ -137,7 +139,7 @@ tbody tr.hl td:first-child{color:var(--june)}
         <div class="input-sublabel">Leave blank → auto from cumul diff</div>
       </div>
       <div class="input-group">
-        <div class="seg-label churn">Churn</div>
+        <div class="seg-label churn">Resurrect</div>
         <label>Cumulative</label>
         <input type="number" class="num-input" id="in_Churn_cumul" placeholder="e.g. 57000"/>
         <label style="margin-top:6px">Daily Uplift</label>
@@ -174,29 +176,17 @@ tbody tr.hl td:first-child{color:var(--june)}
   <canvas id="cumulChart" height="190"></canvas>
 </div>
 
-<!-- Two charts -->
-<div class="two-col">
-  <div class="chart-wrap" style="margin-bottom:0">
-    <div class="chart-header">
-      <div class="chart-title">Daily Uplift</div>
-      <div class="legend">
-        <div class="leg"><div class="leg-dot" style="background:var(--april);opacity:.5"></div><span>Apr</span></div>
-        <div class="leg"><div class="leg-dot" style="background:var(--may);opacity:.5"></div><span>May</span></div>
-        <div class="leg"><div class="leg-dot" style="background:var(--june)"></div><span>Jun</span></div>
-      </div>
+<!-- Daily Uplift chart -->
+<div class="chart-wrap">
+  <div class="chart-header">
+    <div class="chart-title">Daily Uplift</div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--april);opacity:.5"></div><span>Apr</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--may);opacity:.5"></div><span>May</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--june)"></div><span>Jun</span></div>
     </div>
-    <canvas id="upliftChart" height="190"></canvas>
   </div>
-  <div class="chart-wrap" style="margin-bottom:0">
-    <div class="chart-header">
-      <div class="chart-title">Growth %MoM</div>
-      <div class="legend">
-        <div class="leg"><div class="leg-line" style="background:var(--may);opacity:.5"></div><span>Apr→May</span></div>
-        <div class="leg"><div class="leg-line" style="background:var(--june)"></div><span>May→Jun</span></div>
-      </div>
-    </div>
-    <canvas id="growthChart" height="190"></canvas>
-  </div>
+  <canvas id="upliftChart" height="190"></canvas>
 </div>
 
 <!-- Table -->
@@ -413,6 +403,9 @@ let activeSeg = 'NFPU';
 let charts = {};
 
 function getLastDay(merchant, seg) {
+  if(seg==='All') {
+    return Math.max(...['NFPU','Churn','Retain'].map(s=>getLastDaySeg(merchant,s)));
+  }
   const june = ALL_DATA[merchant][seg]?.cumul?.June || [];
   let last = 0;
   june.forEach((v,i) => { if(v!=null) last=i+1; });
@@ -482,6 +475,7 @@ function renderMerchantStripe() {
 
 function renderCards() {
   const m = activeMerchant, s = activeSeg;
+  if(s==='All') { renderCardsAll(m); return; }
   if(!ALL_DATA[m][s]) {
     document.getElementById('cards').innerHTML = '<div style="color:var(--muted);font-family:JetBrains Mono,monospace;font-size:11px;padding:10px">No data for this merchant/segment combination.</div>';
     return;
@@ -501,7 +495,6 @@ function renderCards() {
 
   const cards = [
     {label:`Jun Cumul D${lastDay}`, value:fmt(jC), sub:`May D${lastDay}: ${fmt(mC)}`, delta:gMay, dl:'vs May'},
-    {label:`vs April D${lastDay}`, value:fmtPct(gApr), sub:`April: ${fmt(aC)}`, delta:gApr, dl:'growth'},
     {label:`Daily Uplift D${lastDay}`, value:fmt(jU), sub:`May D${lastDay}: ${fmt(mU)}`, delta:uG, dl:'vs May'},
     {label:'Avg Daily Uplift', value:fmt(avgJ), sub:`May avg: ${fmt(avgM)} | Apr: ${fmt(d.avgUplift.April)}`, delta:avgG, dl:'avg MoM'},
   ];
@@ -509,7 +502,7 @@ function renderCards() {
   const el = document.getElementById('cards');
   el.innerHTML = '';
   cards.forEach(c=>{
-    const isGood = s==='Churn' ? (c.delta!=null?c.delta<0:null) : (c.delta!=null?c.delta>=0:null);
+    const isGood = c.delta!=null?c.delta>=0:null;
     const cls = isGood==null?'delta-neutral':(isGood?'delta-up':'delta-down');
     const arrow = c.delta==null?'':(c.delta>=0?'▲':'▼');
     el.innerHTML += `<div class="card">
@@ -562,6 +555,7 @@ function makeChart(id, type, labels, datasets, opts={}) {
 
 function renderCharts() {
   const m = activeMerchant, s = activeSeg;
+  if(s==='All') { renderChartsAll(m); return; }
   if(!ALL_DATA[m][s]) return;
   const d = ALL_DATA[m][s];
   const labels = DAYS.map(n=>`D${n}`);
@@ -583,28 +577,16 @@ function renderCharts() {
     {label:'June', data:juneU,         backgroundColor:COLORS.June+'88', borderColor:COLORS.June,      borderWidth:1,borderRadius:3},
   ]);
 
-  const gAM = d.cumul.May.map((v,i)=>{
-    const a=d.cumul.April[i]; return (v!=null&&a!=null&&a!==0)?(v/a-1)*100:null;
-  });
-  const gMJ = d.cumul.June.map((v,i)=>{
-    const mv=d.cumul.May[i]; return (i<lastDay&&v!=null&&mv!=null&&mv!==0)?(v/mv-1)*100:null;
-  });
-
-  makeChart('growthChart','line',labels,[
-    {label:'Apr→May',data:gAM,borderColor:COLORS.May,borderWidth:1.5,pointRadius:0,borderDash:[4,3],tension:.3,spanGaps:false},
-    {label:'May→Jun',data:gMJ,borderColor:COLORS.June,borderWidth:2,
-      pointRadius:ctx=>ctx.dataIndex===lastDay-1?5:0, pointBackgroundColor:COLORS.June,
-      tension:.3,spanGaps:false, fill:{target:'zero',above:'rgba(16,185,129,0.06)',below:'rgba(239,68,68,0.06)'}},
-    {label:'Zero',data:Array(31).fill(0),borderColor:'#1e2d47',borderWidth:1,pointRadius:0,borderDash:[2,4]},
-  ],{pct:true});
 }
 
 function renderTable() {
   const m = activeMerchant, s = activeSeg;
+  if(s==='All') { renderTableAll(m); return; }
   document.getElementById('tableHead').innerHTML=`<tr>
     <th>Day</th>
-    <th>Apr Cumul</th><th>May Cumul</th><th>Jun Cumul</th><th>Jun/May%</th>
-    <th>Apr Uplift</th><th>May Uplift</th><th>Jun Uplift</th><th>Uplift%</th>
+    <th>Apr Cumul</th><th>May Cumul</th><th>Jun Cumul</th>
+    <th>Apr Uplift</th><th>May Uplift</th><th>Jun Uplift</th>
+    <th>Uplift% vs May</th><th>Uplift% vs Apr</th>
   </tr>`;
   const body = document.getElementById('tableBody');
   body.innerHTML='';
@@ -619,23 +601,164 @@ function renderTable() {
   for(let i=0;i<maxDay;i++){
     const aC=d.cumul.April[i],mC=d.cumul.May[i],jC=i<lastDay?d.cumul.June[i]:null;
     const aU=d.uplift.April[i],mU=d.uplift.May[i],jU=i<lastDay?d.uplift.June[i]:null;
-    const g=(jC!=null&&mC)?(jC/mC-1):null;
-    const uG=(jU!=null&&mU)?(jU/mU-1):null;
-    const gGood=s==='Churn'?(g!=null&&g<0):(g!=null&&g>=0);
-    const uGood=s==='Churn'?(uG!=null&&uG<0):(uG!=null&&uG>=0);
+    const uVsMay=(jU!=null&&mU&&mU!==0)?(jU/mU-1):null;
+    const uVsApr=(jU!=null&&aU&&aU!==0)?(jU/aU-1):null;
     const tr=document.createElement('tr');
     if(i===lastDay-1) tr.className='hl';
     tr.innerHTML=`
       <td>${i+1}${i===lastDay-1?' ●':''}</td>
-      <td class="c-april">${aC!=null?fmt(aC):'—'}</td>
-      <td class="c-may">${mC!=null?fmt(mC):'—'}</td>
-      <td class="c-june">${jC!=null?fmt(jC):'—'}</td>
-      <td class="${g==null?'':(gGood?'c-pos':'c-neg')}">${g!=null?fmtPct(g):'—'}</td>
-      <td class="c-april">${aU!=null?fmt(aU):'—'}</td>
-      <td class="c-may">${mU!=null?fmt(mU):'—'}</td>
-      <td class="c-june">${jU!=null?fmt(jU):'—'}</td>
-      <td class="${uG==null?'':(uGood?'c-pos':'c-neg')}">${uG!=null?fmtPct(uG):'—'}</td>
+      <td style="color:#4a5e78">${aC!=null?fmt(aC):'—'}</td>
+      <td style="color:#4a5e78">${mC!=null?fmt(mC):'—'}</td>
+      <td style="color:#e2e8f0">${jC!=null?fmt(jC):'—'}</td>
+      <td style="color:#4a5e78">${aU!=null?fmt(aU):'—'}</td>
+      <td style="color:#4a5e78">${mU!=null?fmt(mU):'—'}</td>
+      <td style="color:#e2e8f0">${jU!=null?fmt(jU):'—'}</td>
+      <td class="${uVsMay==null?'':(uVsMay>=0?'c-pos':'c-neg')}">${uVsMay!=null?fmtPct(uVsMay):'—'}</td>
+      <td class="${uVsApr==null?'':(uVsApr>=0?'c-pos':'c-neg')}">${uVsApr!=null?fmtPct(uVsApr):'—'}</td>
     `;
+    body.appendChild(tr);
+  }
+}
+
+
+function getLastDaySeg(m, seg) {
+  if(!ALL_DATA[m][seg]) return 0;
+  const june = ALL_DATA[m][seg].cumul.June;
+  let last=0; june.forEach((v,i)=>{if(v!=null)last=i+1;}); return last;
+}
+
+function renderCardsAll(m) {
+  const segs = ['NFPU','Churn','Retain'];
+  const labels = ['NFPU (New)','Resurrect','Retain'];
+  const segColors = ['#4ade80','#60a5fa','#a78bfa'];
+  const el = document.getElementById('cards');
+  el.innerHTML='';
+  segs.forEach((s,si)=>{
+    if(!ALL_DATA[m][s]) return;
+    const d=ALL_DATA[m][s];
+    const lastDay=getLastDaySeg(m,s);
+    const jC=d.cumul.June[lastDay-1], mC=d.cumul.May[lastDay-1];
+    const gMay=(jC!=null&&mC)?(jC/mC-1):null;
+    const jU=d.uplift.June[lastDay-1], mU=d.uplift.May[lastDay-1];
+    const uG=(jU!=null&&mU)?(jU/mU-1):null;
+    const isGood=gMay!=null?gMay>=0:null;
+    const cls=isGood==null?'delta-neutral':(isGood?'delta-up':'delta-down');
+    const arrow=gMay==null?'':(gMay>=0?'▲':'▼');
+    el.innerHTML+=`<div class="card" style="border-top:2px solid ${segColors[si]}">
+      <div class="card-label">${labels[si]}</div>
+      <div class="card-value">${fmt(jC)}</div>
+      <div class="card-sub">May D${lastDay}: ${fmt(mC)} | Uplift: ${fmt(jU)}</div>
+      <span class="delta-badge ${cls}">${arrow} ${gMay!=null?fmtPct(gMay):'—'} vs May</span>
+    </div>`;
+  });
+}
+
+function renderChartsAll(m) {
+  const labels = DAYS.map(n=>`D${n}`);
+  const segDefs = [
+    {key:'NFPU', label:'NFPU (New)', color:'#4ade80'},
+    {key:'Churn', label:'Resurrect', color:'#60a5fa'},
+    {key:'Retain', label:'Retain', color:'#a78bfa'},
+  ];
+  // Cumulative chart - 3 lines for June only, with May dashed
+  const datasets = [];
+  segDefs.forEach(sd=>{
+    if(!ALL_DATA[m][sd.key]) return;
+    const d=ALL_DATA[m][sd.key];
+    const lastDay=getLastDaySeg(m,sd.key);
+    datasets.push({
+      label:sd.label+' May', data:d.cumul.May, borderColor:sd.color,
+      borderWidth:1.2, pointRadius:0, borderDash:[4,3], tension:.3, spanGaps:false, opacity:.4
+    });
+    datasets.push({
+      label:sd.label, data:d.cumul.June.map((v,i)=>i<lastDay?v:null),
+      borderColor:sd.color, borderWidth:2.5,
+      pointRadius:ctx=>ctx.dataIndex===lastDay-1?4:0,
+      pointBackgroundColor:sd.color, tension:.3, spanGaps:false,
+    });
+  });
+  if(charts['cumulChart']) charts['cumulChart'].destroy();
+  const ctx=document.getElementById('cumulChart').getContext('2d');
+  charts['cumulChart']=new Chart(ctx,{
+    type:'line', data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:true, labels:{color:'#64748b',font:{family:'JetBrains Mono',size:9},boxWidth:12,padding:12}},
+        tooltip:{backgroundColor:'#0d1e35',borderColor:'#1e3a5f',borderWidth:1,
+          titleColor:'#94a3b8',bodyColor:'#e2e8f0',
+          titleFont:{family:'JetBrains Mono',size:10},bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{label:ctx=>{if(ctx.raw==null)return null; return ` ${ctx.dataset.label}: ${fmt(ctx.raw)}`;}}
+        }
+      },
+      scales:{
+        x:{grid:{color:'#0c1520',drawTicks:false},ticks:{color:'#3a5270',font:{family:'JetBrains Mono',size:9}}},
+        y:{grid:{color:'#0c1520'},ticks:{color:'#3a5270',font:{family:'JetBrains Mono',size:9},callback:v=>Math.abs(v)>=1000?(v/1000).toFixed(0)+'K':v}}
+      }
+    }
+  });
+  // Uplift chart
+  const upDatasets=[];
+  segDefs.forEach(sd=>{
+    if(!ALL_DATA[m][sd.key]) return;
+    const d=ALL_DATA[m][sd.key];
+    const lastDay=getLastDaySeg(m,sd.key);
+    upDatasets.push({
+      label:sd.label, data:d.uplift.June.map((v,i)=>i<lastDay?v:null),
+      backgroundColor:sd.color+'88', borderColor:sd.color, borderWidth:1, borderRadius:3, type:'bar'
+    });
+  });
+  if(charts['upliftChart']) charts['upliftChart'].destroy();
+  const ctx2=document.getElementById('upliftChart').getContext('2d');
+  charts['upliftChart']=new Chart(ctx2,{
+    type:'bar', data:{labels,datasets:upDatasets},
+    options:{
+      responsive:true,maintainAspectRatio:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:true,labels:{color:'#64748b',font:{family:'JetBrains Mono',size:9},boxWidth:12,padding:10}},
+        tooltip:{backgroundColor:'#0d1e35',borderColor:'#1e3a5f',borderWidth:1,
+          titleColor:'#94a3b8',bodyColor:'#e2e8f0',
+          titleFont:{family:'JetBrains Mono',size:10},bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{label:ctx=>{if(ctx.raw==null)return null; return ` ${ctx.dataset.label}: ${fmt(ctx.raw)}`;}}
+        }
+      },
+      scales:{
+        x:{grid:{color:'#0c1520',drawTicks:false},ticks:{color:'#3a5270',font:{family:'JetBrains Mono',size:9}}},
+        y:{grid:{color:'#0c1520'},ticks:{color:'#3a5270',font:{family:'JetBrains Mono',size:9},callback:v=>Math.abs(v)>=1000?(v/1000).toFixed(0)+'K':v}}
+      }
+    }
+  });
+}
+
+function renderTableAll(m) {
+  const segs = [{key:'NFPU',label:'NFPU',cls:'c-pos'},{key:'Churn',label:'Resurrect',cls:'c-may'},{key:'Retain',label:'Retain',cls:'c-june'}];
+  document.getElementById('tableHead').innerHTML=`<tr>
+    <th>Day</th>
+    ${segs.map(s=>`<th>${s.label} Jun</th><th>${s.label} May</th><th>%</th>`).join('')}
+  </tr>`;
+  const body=document.getElementById('tableBody');
+  body.innerHTML='';
+  const maxDay=Math.max(...segs.map(s=>getLastDaySeg(m,s.key)));
+  for(let i=0;i<maxDay;i++){
+    const tr=document.createElement('tr');
+    let isLast=false;
+    let cells=`<td>${i+1}</td>`;
+    segs.forEach(s=>{
+      if(!ALL_DATA[m][s.key]){cells+=`<td>—</td><td>—</td><td>—</td>`;return;}
+      const d=ALL_DATA[m][s.key];
+      const lastDay=getLastDaySeg(m,s.key);
+      if(i===lastDay-1) isLast=true;
+      const jC=i<lastDay?d.cumul.June[i]:null;
+      const mC=d.cumul.May[i];
+      const g=(jC!=null&&mC)?(jC/mC-1):null;
+      cells+=`<td class="${s.cls}">${jC!=null?fmt(jC):'—'}</td>`;
+      cells+=`<td class="c-april">${mC!=null?fmt(mC):'—'}</td>`;
+      cells+=`<td class="${g==null?'':(g>=0?'c-pos':'c-neg')}">${g!=null?fmtPct(g):'—'}</td>`;
+    });
+    tr.innerHTML=cells;
+    if(isLast) tr.className='hl';
     body.appendChild(tr);
   }
 }
