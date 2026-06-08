@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>MBS Daily Segment Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@300;400;600;700&display=swap');
+:root{--bg:#080c14;--surface:#0d1422;--border:#162032;--border2:#1e2e45;--text:#e2e8f0;--muted:#4a5e78;--muted2:#2a3d55;--april:#f59e0b;--may:#3b82f6;--june:#10b981}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px 24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:baseline;gap:10px}
+.logo h1{font-size:18px;font-weight:700;color:#f8fafc;letter-spacing:-.4px}
+.logo span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.last-update{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+/* Tab rows */
+.tab-row{display:flex;gap:6px;margin-bottom:10px}
+.tab-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 16px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:.5px}
+.tab-pill:hover{color:var(--text);border-color:#3b82f6}
+.tab-pill.active{font-weight:700;border-color:transparent}
+/* merchant colors */
+.tab-pill[data-m="MBS"].active{background:#1a1a3a;color:#a78bfa;border-color:#7c3aed}
+.tab-pill[data-m="Grab"].active{background:#1a2e1a;color:#4ade80;border-color:#16a34a}
+.tab-pill[data-m="GSM"].active{background:#1a2e2a;color:#2dd4bf;border-color:#0d9488}
+.tab-pill[data-m="Be"].active{background:#2e1a1a;color:#f87171;border-color:#dc2626}
+/* seg tabs */
+.tab-pill[data-seg="NFPU"].active{background:#1a3a1a;color:#4ade80;border-color:#16a34a}
+.tab-pill[data-seg="Churn"].active{background:#3a0a0a;color:#f87171;border-color:#dc2626}
+.tab-pill[data-seg="Retain"].active{background:#0a1e3a;color:#60a5fa;border-color:#2563eb}
+.divider{height:1px;background:var(--border);margin-bottom:14px}
+/* Cards */
+.cards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 15px}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px}
+.card-value{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:#f1f5f9}
+.card-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.delta-badge{display:inline-flex;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border-radius:4px;margin-top:5px}
+.delta-up{background:#0a2d14;color:#4ade80}.delta-down{background:#2d0a0a;color:#f87171}.delta-neutral{background:var(--border2);color:var(--muted)}
+/* Charts */
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.chart-title{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;font-family:'JetBrains Mono',monospace}
+.legend{display:flex;gap:14px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-line{width:18px;height:2px;border-radius:1px}
+.leg-dot{width:6px;height:6px;border-radius:50%}
+canvas{width:100%!important}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead th{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);text-align:right;padding:0 7px 9px;border-bottom:1px solid var(--border);white-space:nowrap}
+thead th:first-child{text-align:center}
+tbody td{padding:5px 7px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:10px;color:#94a3b8;border-bottom:1px solid #0c1520}
+tbody td:first-child{text-align:center;font-weight:600;color:#64748b}
+tbody tr:hover td{background:#0d1e3544}
+tbody tr.hl td{background:#0e2235!important}
+tbody tr.hl td:first-child{color:var(--june)}
+.c-april{color:var(--april)!important}.c-may{color:var(--may)!important}.c-june{color:var(--june)!important}
+.c-pos{color:#4ade80!important}.c-neg{color:#f87171!important}
+/* Input panel */
+.input-panel{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:18px;margin-bottom:16px}
+.input-panel-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.input-panel-title{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#60a5fa}
+.toggle-btn{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--border2);border:none;border-radius:4px;padding:3px 10px;cursor:pointer}
+.input-body{display:none;margin-top:16px}
+.input-body.open{display:block}
+.day-selector-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.day-selector-row label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase}
+.day-input{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;width:60px;padding:6px 10px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:#60a5fa;text-align:center}
+.day-input:focus{outline:none;border-color:#3b82f6}
+.input-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.input-group{display:flex;flex-direction:column;gap:5px}
+.input-group label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.seg-label{font-size:10px;font-weight:600;margin-bottom:2px}
+.seg-label.nfpu{color:#4ade80}.seg-label.churn{color:#f87171}.seg-label.retain{color:#60a5fa}
+.num-input{font-family:'JetBrains Mono',monospace;font-size:12px;padding:7px 11px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);width:100%}
+.num-input:focus{outline:none;border-color:#3b82f6;background:#0a1525}
+.num-input::placeholder{color:var(--muted2)}
+.input-sublabel{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted2);margin-top:1px}
+.save-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:9px 26px;background:#1e3a5f;border:1px solid #3b82f6;border-radius:7px;color:#60a5fa;cursor:pointer;transition:all .15s}
+.save-btn:hover{background:#2a4f7a;color:#93c5fd}
+.save-confirm{font-family:'JetBrains Mono',monospace;font-size:10px;color:#4ade80;margin-left:12px;opacity:0;transition:opacity .3s}
+.save-confirm.show{opacity:1}
+/* merchant tab indicator stripe */
+.merchant-stripe{height:3px;border-radius:2px;margin-bottom:14px;transition:background .2s}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <h1>MBS Daily Segment Tracker</h1>
+    <span>June-26</span>
+  </div>
+  <div class="last-update" id="lastUpdate">Last data: Day 6</div>
+</div>
+
+<!-- Merchant tabs -->
+<div class="tab-row" id="merchantTabs">
+  <button class="tab-pill active" data-m="MBS">All MBS</button>
+  <button class="tab-pill" data-m="Grab">Grab</button>
+  <button class="tab-pill" data-m="GSM">Xanh SM</button>
+  <button class="tab-pill" data-m="Be">Be</button>
+</div>
+
+<div class="merchant-stripe" id="merchantStripe"></div>
+
+<!-- Segment tabs -->
+<div class="tab-row" id="segTabs">
+  <button class="tab-pill active" data-seg="NFPU">NFPU (New)</button>
+  <button class="tab-pill" data-seg="Churn">Churn</button>
+  <button class="tab-pill" data-seg="Retain">Retain</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- Input panel -->
+<div class="input-panel">
+  <div class="input-panel-header" onclick="toggleInput()">
+    <div class="input-panel-title">📥 Update Daily Data</div>
+    <button class="toggle-btn" id="toggleBtn">▼ Open</button>
+  </div>
+  <div class="input-body" id="inputBody">
+    <div class="day-selector-row">
+      <label>Day</label>
+      <input type="number" class="day-input" id="inputDay" min="1" max="31" value="7"/>
+      <span style="font-size:11px;color:var(--muted)">Merchant: <strong id="inputMerchantLabel" style="color:#60a5fa">MBS</strong> — fill cumulative totals for that day</span>
+    </div>
+    <div class="input-grid">
+      <div class="input-group">
+        <div class="seg-label nfpu">NFPU</div>
+        <label>Cumulative</label>
+        <input type="number" class="num-input" id="in_NFPU_cumul" placeholder="e.g. 11500"/>
+        <label style="margin-top:6px">Daily Uplift</label>
+        <input type="number" class="num-input" id="in_NFPU_uplift" placeholder="auto-calc if blank"/>
+        <div class="input-sublabel">Leave blank → auto from cumul diff</div>
+      </div>
+      <div class="input-group">
+        <div class="seg-label churn">Churn</div>
+        <label>Cumulative</label>
+        <input type="number" class="num-input" id="in_Churn_cumul" placeholder="e.g. 57000"/>
+        <label style="margin-top:6px">Daily Uplift</label>
+        <input type="number" class="num-input" id="in_Churn_uplift" placeholder="auto-calc if blank"/>
+      </div>
+      <div class="input-group">
+        <div class="seg-label retain">Retain</div>
+        <label>Cumulative</label>
+        <input type="number" class="num-input" id="in_Retain_cumul" placeholder="e.g. 330000"/>
+        <label style="margin-top:6px">Daily Uplift</label>
+        <input type="number" class="num-input" id="in_Retain_uplift" placeholder="auto-calc if blank"/>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center">
+      <button class="save-btn" onclick="saveDay()">Save & Update Charts</button>
+      <span class="save-confirm" id="saveConfirm">✓ Updated!</span>
+    </div>
+  </div>
+</div>
+
+<!-- Summary cards -->
+<div class="cards-row" id="cards"></div>
+
+<!-- Cumulative chart -->
+<div class="chart-wrap">
+  <div class="chart-header">
+    <div class="chart-title">Cumulative — Daily Pace</div>
+    <div class="legend">
+      <div class="leg"><div class="leg-line" style="background:var(--april);opacity:.6"></div><span>April</span></div>
+      <div class="leg"><div class="leg-line" style="background:var(--may);opacity:.6"></div><span>May</span></div>
+      <div class="leg"><div class="leg-line" style="background:var(--june)"></div><span>June</span></div>
+    </div>
+  </div>
+  <canvas id="cumulChart" height="190"></canvas>
+</div>
+
+<!-- Two charts -->
+<div class="two-col">
+  <div class="chart-wrap" style="margin-bottom:0">
+    <div class="chart-header">
+      <div class="chart-title">Daily Uplift</div>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:var(--april);opacity:.5"></div><span>Apr</span></div>
+        <div class="leg"><div class="leg-dot" style="background:var(--may);opacity:.5"></div><span>May</span></div>
+        <div class="leg"><div class="leg-dot" style="background:var(--june)"></div><span>Jun</span></div>
+      </div>
+    </div>
+    <canvas id="upliftChart" height="190"></canvas>
+  </div>
+  <div class="chart-wrap" style="margin-bottom:0">
+    <div class="chart-header">
+      <div class="chart-title">Growth %MoM</div>
+      <div class="legend">
+        <div class="leg"><div class="leg-line" style="background:var(--may);opacity:.5"></div><span>Apr→May</span></div>
+        <div class="leg"><div class="leg-line" style="background:var(--june)"></div><span>May→Jun</span></div>
+      </div>
+    </div>
+    <canvas id="growthChart" height="190"></canvas>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <div class="chart-title" style="margin-bottom:12px">Daily Detail</div>
+  <table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table>
+</div>
+
+<script>
+const ALL_DATA = {
+  MBS: {
+    "NFPU": {
+      cumul: {
+        April: [1825, 2877, 4083, 5301, 6276, 7367, 8473, 9654, 10964, 12495, 13973, 15186, 16326, 17493, 18775, 20212, 21810, 23399, 24784, 26222, 27706, 29307, 31106, 33180, 34995, 36599, 38170, 39861, 41584, null, null],
+        May: [2334, 3453, 4789, 6366, 7787, 9213, 10822, 12426, 14027, 15466, 16934, 18307, 19868, 21569, 23651, 25547, 26934, 28257, 29697, 31268, 33008, 34936, 37001, 38836, 40518, 42133, 43659, 45072, 46497, 47779, null],
+        June: [2570, 3995, 5462, 7038, 8671, 10245, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [924, 1052, 1206, 1218, 975, 1091, 1106, 1181, 1310, 1531, 1478, 1213, 1140, 1167, 1282, 1437, 1598, 1589, 1385, 1438, 1484, 1601, 1799, 2074, 1815, 1604, 1571, 1691, 1723, null, null],
+        May: [1105, 1119, 1336, 1577, 1421, 1426, 1609, 1604, 1601, 1439, 1468, 1373, 1561, 1701, 2082, 1896, 1387, 1323, 1440, 1571, 1740, 1928, 2065, 1835, 1682, 1615, 1526, 1413, 1425, null, null],
+        June: [1277, 1425, 1467, 1576, 1633, 1574, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 901.0,
+        May: 1229.0,
+        June: 1293.0,
+      },
+    },
+    "Churn": {
+      cumul: {
+        April: [10687, 17069, 24102, 30796, 36546, 42234, 47356, 52622, 59140, 65876, 71795, 76164, 80461, 84604, 89135, 94394, 100237, 105351, 109722, 114053, 118517, 123290, 129233, 138970, 147430, 154460, 160965, 168446, 175443, null, null],
+        May: [11202, 17209, 24123, 31202, 37611, 43705, 50268, 57249, 63540, 68892, 74146, 79058, 84478, 90823, 98704, 105039, 109689, 113951, 118495, 123292, 128525, 134828, 140945, 146132, 150570, 154720, 158899, 163112, 167616, 171349, null],
+        June: [13947, 20979, 28064, 35767, 43459, 50345, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [5436, 6382, 7033, 6694, 5750, 5688, 5122, 5266, 6518, 6736, 5919, 4369, 4297, 4143, 4531, 5259, 5843, 5114, 4371, 4331, 4464, 4773, 5943, 9737, 8460, 7030, 6505, 7481, 6997, null, null],
+        May: [5518, 6007, 6914, 7079, 6409, 6094, 6563, 6981, 6291, 5352, 5254, 4912, 5420, 6345, 7881, 6335, 4650, 4262, 4544, 4797, 5233, 6303, 6117, 5187, 4438, 4150, 4179, 4213, 4504, null, null],
+        June: [6773, 7032, 7085, 7703, 7692, 6886, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 5251.0,
+        May: 5684.0,
+        June: 7174.0,
+      },
+    },
+    "Retain": {
+      cumul: {
+        April: [144606, 186940, 221666, 248741, 270597, 289756, 306458, 321378, 337370, 352849, 365255, 374539, 383011, 390589, 398369, 406661, 415110, 421962, 427597, 433065, 438359, 443806, 450531, 457498, 462936, 467229, 471364, 476023, 480112, null, null],
+        May: [117281, 163248, 212296, 247079, 274992, 298315, 320542, 341207, 357484, 370739, 382805, 393701, 403980, 415097, 426337, 434987, 441896, 448194, 454620, 460765, 467277, 474287, 480525, 485616, 490186, 494462, 498613, 503008, 507184, 510657, null],
+        June: [159111, 200922, 235150, 266665, 293850, 315410, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [52397, 42334, 34726, 27075, 21856, 19159, 16702, 14920, 15992, 15479, 12406, 9284, 8472, 7578, 7780, 8292, 8449, 6852, 5635, 5468, 5294, 5447, 6725, 6967, 5438, 4293, 4135, 4659, 4089, null, null],
+        May: [48322, 45967, 49048, 34783, 27913, 23323, 22227, 20665, 16277, 13255, 12066, 10896, 10279, 11117, 11240, 8650, 6909, 6298, 6426, 6145, 6512, 7010, 6238, 5091, 4570, 4276, 4151, 4395, 4176, null, null],
+        June: [57774, 41811, 34228, 31515, 27185, 21560, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 92209.0,
+        May: 68959.0,
+        June: 101337.0,
+      },
+    },
+  },
+  Grab: {
+    "NFPU": {
+      cumul: {
+        April: [1701, 2676, 3691, 4732, 5616, 6729, 7784, 8922, 10186, 11575, 12976, 14160, 15298, 16397, 17697, 19178, 20759, 22361, 23721, 25112, 26607, 28186, 29949, 31821, 33670, 35310, 36951, 38689, 40345, null, null],
+        May: [1856, 2834, 3723, 5094, 6407, 7704, 9262, 10772, 12256, 13599, 14929, 16245, 17643, 19147, 20860, 22484, 23796, 25133, 26568, 28063, 29615, 31248, 33006, 34594, 36142, 37703, null, null, null, null, null],
+        June: [2072, 3394, 4772, 6213, 7642, 9080, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [4200, 4675, 4799, 4521, 3842, 3723, 3458, 3532, 4610, 4540, 4204, 3095, 3208, 2925, 3060, 3593, 3940, 3543, 2878, 2792, 3004, 3381, 3944, 8345, 7389, 6158, 5561, 6061, 5653, null, null],
+        May: [4296, 4699, 4203, 4186, 4125, 4110, 4817, 4978, 4404, 3779, 3846, 3531, 3860, 4483, 4746, 4193, 3401, 3005, 3274, 3403, 3454, 4076, 3833, 3245, 3109, 3063, 3136, 3472, 3670, 3069, null],
+        June: [4814, 5495, 5400, 5943, 5520, 5137, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 3998.0,
+        May: 4580.0,
+        June: 5114.0,
+      },
+    },
+    "Retain": {
+      cumul: {
+        April: [100112, 129353, 152617, 171615, 186972, 201173, 213426, 224351, 236166, 247363, 256775, 264030, 270687, 276577, 282578, 288803, 294991, 300215, 304495, 308536, 312540, 316692, 321588, 326361, 330382, 333689, 336762, 340090, 343134, null, null],
+        May: [81102, 111928, 143496, 166914, 186299, 203070, 219380, 234265, 246101, 255955, 265066, 273380, 281152, 289318, 297377, 304008, 309372, 314226, 319256, 323973, 328935, 334173, 338872, 342763, 346311, 349677, 353052, 356481, 359792, 362591, null],
+        June: [109139, 138772, 163043, 185320, 204115, 219312, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [37212, 29241, 23264, 18998, 15357, 14201, 12253, 10925, 11815, 11197, 9412, 7255, 6657, 5890, 6001, 6225, 6188, 5224, 4280, 4041, 4004, 4152, 4896, 4773, 4021, 3307, 3073, 3328, 3044, null, null],
+        May: [33114, 30826, 31568, 23418, 19385, 16771, 16310, 14885, 11836, 9854, 9111, 8314, 7772, 8166, 8059, 6631, 5364, 4854, 5030, 4717, 4962, 5238, 4699, 3891, 3548, 3366, 3375, 3429, 3311, null, null],
+        June: [40686, 29633, 24271, 22277, 18795, 15197, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 62900.0,
+        May: 47988.0,
+        June: 68453.0,
+      },
+    },
+  },
+  GSM: {
+    "NFPU": {
+      cumul: {
+        April: [866, 1409, 2343, 3292, 4079, 4698, 5307, 5968, 6819, 7899, 8824, 9497, 10093, 10733, 11505, 12332, 13325, 14295, 15225, 16248, 17196, 18231, 19681, 21341, 22192, 22825, 23595, 24560, 25401, null, null],
+        May: [1499, 2295, 4275, 6122, 7453, 8670, 9809, 11189, 12607, 13733, 14870, 15912, 17120, 18712, 21603, 23577, 24253, 24889, 25626, 26663, 28226, 30351, 32658, 34680, 35906, 36751, 37631, 38532, 39599, 40402, null],
+        June: [2487, 3569, 4685, 5902, 7274, 8633, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [429, 543, 934, 949, 787, 619, 609, 661, 851, 1080, 925, 673, 596, 640, 772, 827, 993, 970, 930, 1023, 948, 1035, 1450, 1660, 851, 633, 770, 965, 841, null, null],
+        May: [776, 796, 1980, 1847, 1331, 1217, 1139, 1380, 1418, 1126, 1137, 1042, 1208, 1592, 2891, 1974, 676, 636, 737, 1037, 1563, 2125, 2307, 2022, 1226, 845, 880, 901, 1067, null, null],
+        June: [1334, 1082, 1116, 1217, 1372, 1359, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 437.0,
+        May: 723.0,
+        June: 1153.0,
+      },
+    },
+    "Churn": {
+      cumul: {
+        April: [2882, 4479, 7400, 10212, 12387, 14281, 15987, 17863, 20258, 23145, 25480, 27034, 28416, 29903, 31453, 33323, 35496, 37322, 38710, 40039, 41426, 42844, 44902, 47250, 49543, 51259, 52829, 55283, 57519, null, null],
+        May: [3780, 5980, 9456, 12442, 14751, 16740, 18674, 20868, 22987, 24712, 26361, 27843, 29722, 32345, 36242, 38927, 40850, 42564, 44393, 46223, 48241, 51001, 53751, 56127, 57942, 59607, 61420, 62910, 64403, 65485, null],
+        June: [5458, 7783, 10133, 12531, 15769, 18366, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [1453, 1597, 2921, 2812, 2175, 1894, 1706, 1876, 2395, 2887, 2335, 1554, 1382, 1487, 1550, 1870, 2173, 1826, 1388, 1329, 1387, 1418, 2058, 2348, 2293, 1716, 1570, 2454, 2236, null, null],
+        May: [2012, 2200, 3476, 2986, 2309, 1989, 1934, 2194, 2119, 1725, 1649, 1482, 1879, 2623, 3897, 2685, 1923, 1714, 1829, 1830, 2018, 2760, 2750, 2376, 1815, 1665, 1813, 1490, 1493, null, null],
+        June: [2758, 2325, 2350, 2398, 3238, 2597, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 1429.0,
+        May: 1768.0,
+        June: 2700.0,
+      },
+    },
+    "Retain": {
+      cumul: {
+        April: [25075, 33441, 41440, 47447, 52015, 55633, 59012, 62341, 66221, 70346, 73384, 75420, 77344, 79124, 80891, 83083, 85381, 87077, 88482, 89866, 91242, 92744, 94964, 97090, 98348, 99217, 100234, 101670, 102765, null, null],
+        May: [22024, 31857, 43258, 50641, 56399, 61151, 65585, 70168, 73854, 76878, 79725, 82273, 84810, 88039, 91362, 93537, 95276, 96780, 98405, 99891, 101611, 103681, 105453, 106937, 108196, 109317, 110534, 111853, 113332, 114355, null],
+        June: [31905, 41022, 48914, 56403, 63683, 69456, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [9389, 8366, 7999, 6007, 4568, 3618, 3379, 3329, 3880, 4125, 3038, 2036, 1924, 1780, 1767, 2192, 2298, 1696, 1405, 1384, 1376, 1502, 2220, 2126, 1258, 869, 1017, 1436, 1095, null, null],
+        May: [10021, 9833, 11401, 7383, 5758, 4752, 4434, 4583, 3686, 3024, 2847, 2548, 2537, 3229, 3323, 2175, 1739, 1504, 1625, 1486, 1720, 2070, 1772, 1484, 1259, 1121, 1217, 1319, 1479, null, null],
+        June: [11954, 9117, 7892, 7489, 7280, 5773, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 15686.0,
+        May: 12003.0,
+        June: 19951.0,
+      },
+    },
+  },
+  Be: {
+    "NFPU": {
+      cumul: {
+        April: [412, 762, 1071, 1386, 1696, 1982, 2314, 2603, 2960, 3304, 3625, 3896, 4145, 4416, 4693, 5025, 5324, 5607, 5834, 6064, 6341, 6648, 7134, 7572, 7866, 8138, 8438, 8825, 9165, null, null],
+        May: [354, 552, 780, 1061, 1320, 1629, 1950, 2275, 2564, 2888, 3200, 3494, 3782, 4145, 4569, 4857, 5187, 5464, 5750, 6038, 6397, 6728, 7086, 7467, 7775, 8076, 8427, 8810, 9202, 47779, null],
+        June: [569, 811, 1102, 1391, 1699, 1939, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [250, 350, 309, 315, 310, 286, 332, 289, 357, 344, 321, 271, 249, 271, 277, 332, 299, 283, 227, 230, 277, 307, 486, 438, 294, 272, 300, 387, 340, null, null],
+        May: [190, 198, 228, 281, 259, 309, 321, 325, 289, 324, 312, 294, 288, 363, 424, 288, 330, 277, 286, 288, 359, 331, 358, 381, 308, 301, 351, 383, 392, null, null],
+        June: [260, 242, 291, 289, 308, 240, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 162.0,
+        May: 164.0,
+        June: 309.0,
+      },
+    },
+    "Churn": {
+      cumul: {
+        April: [2756, 4754, 6691, 8562, 10251, 11917, 13566, 15136, 16856, 18519, 19916, 20996, 21940, 22913, 24104, 25779, 27395, 28676, 29857, 31007, 32032, 33332, 35246, 36777, 38070, 39195, 40434, 41982, 43351, null, null],
+        May: [2243, 3780, 5498, 7320, 9140, 10920, 12767, 14787, 16435, 17734, 18900, 20118, 21321, 22782, 24493, 25835, 27025, 28086, 29277, 30585, 31982, 33479, 34935, 36142, 37136, 38063, 39115, 40433, 41730, 42772, null],
+        June: [3882, 5537, 7158, 9247, 11168, 12710, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [1542, 1998, 1937, 1871, 1689, 1666, 1649, 1570, 1720, 1663, 1397, 1080, 944, 973, 1191, 1675, 1616, 1281, 1181, 1150, 1025, 1300, 1914, 1531, 1293, 1125, 1239, 1548, 1369, null, null],
+        May: [1138, 1537, 1718, 1822, 1820, 1780, 1847, 2020, 1648, 1299, 1166, 1218, 1203, 1461, 1711, 1342, 1190, 1061, 1191, 1308, 1397, 1497, 1456, 1207, 994, 927, 1052, 1318, 1297, null, null],
+        June: [1910, 1655, 1621, 2089, 1921, 1542, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 1214.0,
+        May: 1105.0,
+        June: 1972.0,
+      },
+    },
+    "Retain": {
+      cumul: {
+        April: [20740, 28150, 34086, 38732, 42933, 46530, 49594, 52348, 55176, 57840, 59951, 61592, 62968, 64265, 65755, 67642, 69469, 70880, 72076, 73317, 74409, 75760, 77389, 78759, 79824, 80779, 81777, 83004, 83946, null, null],
+        May: [12802, 19305, 27687, 34116, 39331, 43610, 47879, 51678, 54500, 56784, 58802, 60637, 62378, 64418, 66365, 67926, 69277, 70483, 71739, 73027, 74280, 75563, 76777, 77744, 78558, 79383, 80170, 81192, 82112, 82848, null],
+        June: [19062, 24341, 28692, 33222, 37097, 40065, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      uplift: {
+        April: [8051, 7410, 5936, 4646, 4201, 3597, 3064, 2754, 2828, 2664, 2111, 1641, 1376, 1297, 1490, 1887, 1827, 1411, 1196, 1241, 1092, 1351, 1629, 1370, 1065, 955, 998, 1227, 942, null, null],
+        May: [5700, 6503, 8382, 6429, 5215, 4279, 4269, 3799, 2822, 2284, 2018, 1835, 1741, 2040, 1947, 1561, 1351, 1206, 1256, 1288, 1253, 1283, 1214, 967, 814, 825, 787, 1022, 920, null, null],
+        June: [7195, 5279, 4351, 4530, 3875, 2968, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      },
+      avgUplift: {
+        April: 12689.0,
+        May: 7102.0,
+        June: 11867.0,
+      },
+    },
+  },
+};
+
+const MERCHANT_COLORS = { MBS:'#7c3aed', Grab:'#16a34a', GSM:'#0d9488', Be:'#dc2626' };
+const COLORS = { April:'#f59e0b', May:'#3b82f6', June:'#10b981' };
+const DAYS = Array.from({length:31},(_,i)=>i+1);
+
+let activeMerchant = 'MBS';
+let activeSeg = 'NFPU';
+let charts = {};
+
+function getLastDay(merchant, seg) {
+  const june = ALL_DATA[merchant][seg]?.cumul?.June || [];
+  let last = 0;
+  june.forEach((v,i) => { if(v!=null) last=i+1; });
+  return last;
+}
+
+function fmt(n) {
+  if(n==null) return '—';
+  if(Math.abs(n)>=1000000) return (n/1000000).toFixed(2)+'M';
+  if(Math.abs(n)>=1000) return (n/1000).toFixed(1)+'K';
+  return Math.round(n).toString();
+}
+
+function fmtPct(v) {
+  if(v==null) return '—';
+  return (v>=0?'+':'')+(v*100).toFixed(1)+'%';
+}
+
+function toggleInput() {
+  const body = document.getElementById('inputBody');
+  const btn = document.getElementById('toggleBtn');
+  const isOpen = body.classList.toggle('open');
+  btn.textContent = isOpen ? '▲ Close' : '▼ Open';
+}
+
+function saveDay() {
+  const day = parseInt(document.getElementById('inputDay').value);
+  if(!day||day<1||day>31){ alert('Invalid day'); return; }
+  const idx = day-1;
+  const m = activeMerchant;
+
+  ['NFPU','Churn','Retain'].forEach(seg => {
+    if(!ALL_DATA[m][seg]) return;
+    const cEl = document.getElementById(`in_${seg}_cumul`);
+    const uEl = document.getElementById(`in_${seg}_uplift`);
+    const cVal = cEl.value.trim();
+    const uVal = uEl.value.trim();
+
+    if(cVal !== '') {
+      ALL_DATA[m][seg].cumul.June[idx] = parseFloat(cVal);
+    }
+    if(uVal !== '') {
+      ALL_DATA[m][seg].uplift.June[idx] = parseFloat(uVal);
+    } else if(cVal !== '') {
+      const prev = idx>0 ? (ALL_DATA[m][seg].cumul.June[idx-1]||0) : 0;
+      ALL_DATA[m][seg].uplift.June[idx] = parseFloat(cVal) - prev;
+    }
+    cEl.value=''; uEl.value='';
+  });
+
+  // Recompute avgUplift
+  ['NFPU','Churn','Retain'].forEach(seg => {
+    if(!ALL_DATA[m][seg]) return;
+    const actuals = ALL_DATA[m][seg].uplift.June.filter(v=>v!=null&&v>0);
+    ALL_DATA[m][seg].avgUplift.June = actuals.length ? Math.round(actuals.reduce((a,b)=>a+b,0)/actuals.length) : null;
+  });
+
+  const conf = document.getElementById('saveConfirm');
+  conf.classList.add('show');
+  setTimeout(()=>conf.classList.remove('show'),2000);
+  renderAll();
+}
+
+function renderMerchantStripe() {
+  document.getElementById('merchantStripe').style.background = MERCHANT_COLORS[activeMerchant]+'88';
+}
+
+function renderCards() {
+  const m = activeMerchant, s = activeSeg;
+  if(!ALL_DATA[m][s]) {
+    document.getElementById('cards').innerHTML = '<div style="color:var(--muted);font-family:JetBrains Mono,monospace;font-size:11px;padding:10px">No data for this merchant/segment combination.</div>';
+    return;
+  }
+  const d = ALL_DATA[m][s];
+  const lastDay = getLastDay(m, s);
+  const jC = d.cumul.June[lastDay-1];
+  const mC = d.cumul.May[lastDay-1];
+  const aC = d.cumul.April[lastDay-1];
+  const gMay = (jC!=null&&mC) ? (jC/mC-1) : null;
+  const gApr = (jC!=null&&aC) ? (jC/aC-1) : null;
+  const jU = d.uplift.June[lastDay-1];
+  const mU = d.uplift.May[lastDay-1];
+  const uG = (jU!=null&&mU) ? (jU/mU-1) : null;
+  const avgJ = d.avgUplift.June, avgM = d.avgUplift.May;
+  const avgG = (avgJ!=null&&avgM) ? (avgJ/avgM-1) : null;
+
+  const cards = [
+    {label:`Jun Cumul D${lastDay}`, value:fmt(jC), sub:`May D${lastDay}: ${fmt(mC)}`, delta:gMay, dl:'vs May'},
+    {label:`vs April D${lastDay}`, value:fmtPct(gApr), sub:`April: ${fmt(aC)}`, delta:gApr, dl:'growth'},
+    {label:`Daily Uplift D${lastDay}`, value:fmt(jU), sub:`May D${lastDay}: ${fmt(mU)}`, delta:uG, dl:'vs May'},
+    {label:'Avg Daily Uplift', value:fmt(avgJ), sub:`May avg: ${fmt(avgM)} | Apr: ${fmt(d.avgUplift.April)}`, delta:avgG, dl:'avg MoM'},
+  ];
+
+  const el = document.getElementById('cards');
+  el.innerHTML = '';
+  cards.forEach(c=>{
+    const isGood = s==='Churn' ? (c.delta!=null?c.delta<0:null) : (c.delta!=null?c.delta>=0:null);
+    const cls = isGood==null?'delta-neutral':(isGood?'delta-up':'delta-down');
+    const arrow = c.delta==null?'':(c.delta>=0?'▲':'▼');
+    el.innerHTML += `<div class="card">
+      <div class="card-label">${c.label}</div>
+      <div class="card-value">${c.value}</div>
+      <div class="card-sub">${c.sub}</div>
+      <span class="delta-badge ${cls}">${arrow} ${c.delta!=null?fmtPct(c.delta):'—'} ${c.dl}</span>
+    </div>`;
+  });
+}
+
+function makeChart(id, type, labels, datasets, opts={}) {
+  if(charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type,
+    data:{labels,datasets},
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#0d1e35',borderColor:'#1e3a5f',borderWidth:1,
+          titleColor:'#94a3b8',bodyColor:'#e2e8f0',
+          titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{
+            label: ctx => {
+              if(ctx.raw==null) return null;
+              const v=ctx.raw;
+              return ` ${ctx.dataset.label}: ${opts.pct?v.toFixed(1)+'%':fmt(v)}`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{grid:{color:'#0c1520',drawTicks:false},ticks:{color:'#3a5270',font:{family:'JetBrains Mono',size:9}}},
+        y:{
+          grid:{color:'#0c1520'},
+          ticks:{color:'#3a5270',font:{family:'JetBrains Mono',size:9},
+            callback: v => opts.pct ? v.toFixed(0)+'%' : (Math.abs(v)>=1000?(v/1000).toFixed(0)+'K':v)
+          },
+          ...(opts.yScale||{})
+        }
+      }
+    }
+  });
+}
+
+function renderCharts() {
+  const m = activeMerchant, s = activeSeg;
+  if(!ALL_DATA[m][s]) return;
+  const d = ALL_DATA[m][s];
+  const labels = DAYS.map(n=>`D${n}`);
+  const lastDay = getLastDay(m, s);
+  const juneC = d.cumul.June.map((v,i)=>i<lastDay?v:null);
+  const juneU = d.uplift.June.map((v,i)=>i<lastDay?v:null);
+
+  makeChart('cumulChart','line',labels,[
+    {label:'April',data:d.cumul.April,borderColor:COLORS.April,borderWidth:1.5,pointRadius:0,borderDash:[4,3],tension:.3,spanGaps:false},
+    {label:'May',  data:d.cumul.May,  borderColor:COLORS.May,  borderWidth:1.5,pointRadius:0,borderDash:[4,3],tension:.3,spanGaps:false},
+    {label:'June', data:juneC,        borderColor:COLORS.June, borderWidth:2.5,
+      pointRadius:ctx=>ctx.dataIndex===lastDay-1?5:0, pointBackgroundColor:COLORS.June,
+      tension:.3,spanGaps:false, fill:{target:'origin',above:'rgba(16,185,129,0.04)'}},
+  ]);
+
+  makeChart('upliftChart','bar',labels,[
+    {label:'April',data:d.uplift.April,backgroundColor:COLORS.April+'40',borderColor:COLORS.April+'80',borderWidth:1,borderRadius:2},
+    {label:'May',  data:d.uplift.May,  backgroundColor:COLORS.May+'40',  borderColor:COLORS.May+'80',  borderWidth:1,borderRadius:2},
+    {label:'June', data:juneU,         backgroundColor:COLORS.June+'88', borderColor:COLORS.June,      borderWidth:1,borderRadius:3},
+  ]);
+
+  const gAM = d.cumul.May.map((v,i)=>{
+    const a=d.cumul.April[i]; return (v!=null&&a!=null&&a!==0)?(v/a-1)*100:null;
+  });
+  const gMJ = d.cumul.June.map((v,i)=>{
+    const mv=d.cumul.May[i]; return (i<lastDay&&v!=null&&mv!=null&&mv!==0)?(v/mv-1)*100:null;
+  });
+
+  makeChart('growthChart','line',labels,[
+    {label:'Apr→May',data:gAM,borderColor:COLORS.May,borderWidth:1.5,pointRadius:0,borderDash:[4,3],tension:.3,spanGaps:false},
+    {label:'May→Jun',data:gMJ,borderColor:COLORS.June,borderWidth:2,
+      pointRadius:ctx=>ctx.dataIndex===lastDay-1?5:0, pointBackgroundColor:COLORS.June,
+      tension:.3,spanGaps:false, fill:{target:'zero',above:'rgba(16,185,129,0.06)',below:'rgba(239,68,68,0.06)'}},
+    {label:'Zero',data:Array(31).fill(0),borderColor:'#1e2d47',borderWidth:1,pointRadius:0,borderDash:[2,4]},
+  ],{pct:true});
+}
+
+function renderTable() {
+  const m = activeMerchant, s = activeSeg;
+  document.getElementById('tableHead').innerHTML=`<tr>
+    <th>Day</th>
+    <th>Apr Cumul</th><th>May Cumul</th><th>Jun Cumul</th><th>Jun/May%</th>
+    <th>Apr Uplift</th><th>May Uplift</th><th>Jun Uplift</th><th>Uplift%</th>
+  </tr>`;
+  const body = document.getElementById('tableBody');
+  body.innerHTML='';
+  if(!ALL_DATA[m][s]) return;
+  const d = ALL_DATA[m][s];
+  const lastDay = getLastDay(m,s);
+  const maxDay = Math.max(
+    d.cumul.April.filter(v=>v!=null).length,
+    d.cumul.May.filter(v=>v!=null).length,
+    lastDay
+  );
+  for(let i=0;i<maxDay;i++){
+    const aC=d.cumul.April[i],mC=d.cumul.May[i],jC=i<lastDay?d.cumul.June[i]:null;
+    const aU=d.uplift.April[i],mU=d.uplift.May[i],jU=i<lastDay?d.uplift.June[i]:null;
+    const g=(jC!=null&&mC)?(jC/mC-1):null;
+    const uG=(jU!=null&&mU)?(jU/mU-1):null;
+    const gGood=s==='Churn'?(g!=null&&g<0):(g!=null&&g>=0);
+    const uGood=s==='Churn'?(uG!=null&&uG<0):(uG!=null&&uG>=0);
+    const tr=document.createElement('tr');
+    if(i===lastDay-1) tr.className='hl';
+    tr.innerHTML=`
+      <td>${i+1}${i===lastDay-1?' ●':''}</td>
+      <td class="c-april">${aC!=null?fmt(aC):'—'}</td>
+      <td class="c-may">${mC!=null?fmt(mC):'—'}</td>
+      <td class="c-june">${jC!=null?fmt(jC):'—'}</td>
+      <td class="${g==null?'':(gGood?'c-pos':'c-neg')}">${g!=null?fmtPct(g):'—'}</td>
+      <td class="c-april">${aU!=null?fmt(aU):'—'}</td>
+      <td class="c-may">${mU!=null?fmt(mU):'—'}</td>
+      <td class="c-june">${jU!=null?fmt(jU):'—'}</td>
+      <td class="${uG==null?'':(uGood?'c-pos':'c-neg')}">${uG!=null?fmtPct(uG):'—'}</td>
+    `;
+    body.appendChild(tr);
+  }
+}
+
+function renderAll() {
+  const lastDay = getLastDay(activeMerchant, activeSeg);
+  document.getElementById('lastUpdate').textContent = `Last data: Day ${lastDay} (June) — ${activeMerchant}`;
+  document.getElementById('inputMerchantLabel').textContent = activeMerchant;
+  document.getElementById('inputDay').value = lastDay;
+  renderMerchantStripe();
+  renderCards();
+  renderCharts();
+  renderTable();
+}
+
+// Merchant tabs
+document.querySelectorAll('[data-m]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-m]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeMerchant=btn.dataset.m;
+    renderAll();
+  });
+});
+
+// Seg tabs
+document.querySelectorAll('[data-seg]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-seg]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeSeg=btn.dataset.seg;
+    renderAll();
+  });
+});
+
+const s=document.createElement('script');
+s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+s.onload=()=>renderAll();
+document.head.appendChild(s);
+</script>
+</body>
+</html>
