@@ -30,7 +30,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tab-pill[data-seg="Retain"].active{background:#0a1e3a;color:#60a5fa;border-color:#2563eb}
 .divider{height:1px;background:var(--border);margin-bottom:14px}
 /* Cards */
-.cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 15px}
 .card-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:7px}
 .card-value{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:#f1f5f9}
@@ -200,195 +200,195 @@ const ALL_DATA = {
   MBS: {
     "NFPU": {
       cumul: {
-        April: [1825, 2877, 4083, 5301, 6276, 7367, 8473, 9654, 10964, 12495, 13973, 15186, 16326, 17493, 18775, 20212, 21810, 23399, 24784, 26222, 27706, 29307, 31106, 33180, 34995, 36599, 38170, 39861, 41584, null, null],
-        May: [2334, 3453, 4789, 6366, 7787, 9213, 10822, 12426, 14027, 15466, 16934, 18307, 19868, 21569, 23651, 25547, 26934, 28257, 29697, 31268, 33008, 34936, 37001, 38836, 40518, 42133, 43659, 45072, 46497, 47779, null],
-        June: [2570, 3995, 5462, 7038, 8671, 10245, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [901, 1825, 2877, 4083, 5301, 6276, 7367, 8473, 9654, 10964, 12495, 13973, 15186, 16326, 17493, 18775, 20212, 21810, 23399, 24784, 26222, 27706, 29307, 31106, 33180, 34995, 36599, 38170, 39861, 41584, null],
+        May: [1229, 2334, 3453, 4789, 6366, 7787, 9213, 10822, 12426, 14027, 15466, 16934, 18307, 19868, 21569, 23651, 25547, 26934, 28257, 29697, 31268, 33008, 34936, 37001, 38836, 40518, 42133, 43659, 45072, 46497, 47779],
+        June: [1293, 2570, 3995, 5462, 7038, 8671, 10245, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [924, 1052, 1206, 1218, 975, 1091, 1106, 1181, 1310, 1531, 1478, 1213, 1140, 1167, 1282, 1437, 1598, 1589, 1385, 1438, 1484, 1601, 1799, 2074, 1815, 1604, 1571, 1691, 1723, null, null],
-        May: [1105, 1119, 1336, 1577, 1421, 1426, 1609, 1604, 1601, 1439, 1468, 1373, 1561, 1701, 2082, 1896, 1387, 1323, 1440, 1571, 1740, 1928, 2065, 1835, 1682, 1615, 1526, 1413, 1425, null, null],
-        June: [1277, 1425, 1467, 1576, 1633, 1574, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [901, 924, 1052, 1206, 1218, 975, 1091, 1106, 1181, 1310, 1531, 1478, 1213, 1140, 1167, 1282, 1437, 1598, 1589, 1385, 1438, 1484, 1601, 1799, 2074, 1815, 1604, 1571, 1691, 1723, null],
+        May: [1229, 1105, 1119, 1336, 1577, 1421, 1426, 1609, 1604, 1601, 1439, 1468, 1373, 1561, 1701, 2082, 1896, 1387, 1323, 1440, 1571, 1740, 1928, 2065, 1835, 1682, 1615, 1526, 1413, 1425, null],
+        June: [1293, 1277, 1425, 1467, 1576, 1633, 1574, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 901.0,
-        May: 1229.0,
-        June: 1293.0,
+        April: 1386.13,
+        May: 1549.9,
+        June: 1463.57,
       },
     },
     "Churn": {
       cumul: {
-        April: [10687, 17069, 24102, 30796, 36546, 42234, 47356, 52622, 59140, 65876, 71795, 76164, 80461, 84604, 89135, 94394, 100237, 105351, 109722, 114053, 118517, 123290, 129233, 138970, 147430, 154460, 160965, 168446, 175443, null, null],
-        May: [11202, 17209, 24123, 31202, 37611, 43705, 50268, 57249, 63540, 68892, 74146, 79058, 84478, 90823, 98704, 105039, 109689, 113951, 118495, 123292, 128525, 134828, 140945, 146132, 150570, 154720, 158899, 163112, 167616, 171349, null],
-        June: [13947, 20979, 28064, 35767, 43459, 50345, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [5251, 10687, 17069, 24102, 30796, 36546, 42234, 47356, 52622, 59140, 65876, 71795, 76164, 80461, 84604, 89135, 94394, 100237, 105351, 109722, 114053, 118517, 123290, 129233, 138970, 147430, 154460, 160965, 168446, 175443, null],
+        May: [5684, 11202, 17209, 24123, 31202, 37611, 43705, 50268, 57249, 63540, 68892, 74146, 79058, 84478, 90823, 98704, 105039, 109689, 113951, 118495, 123292, 128525, 134828, 140945, 146132, 150570, 154720, 158899, 163112, 167616, 171349],
+        June: [7174, 13947, 20979, 28064, 35767, 43459, 50345, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [5436, 6382, 7033, 6694, 5750, 5688, 5122, 5266, 6518, 6736, 5919, 4369, 4297, 4143, 4531, 5259, 5843, 5114, 4371, 4331, 4464, 4773, 5943, 9737, 8460, 7030, 6505, 7481, 6997, null, null],
-        May: [5518, 6007, 6914, 7079, 6409, 6094, 6563, 6981, 6291, 5352, 5254, 4912, 5420, 6345, 7881, 6335, 4650, 4262, 4544, 4797, 5233, 6303, 6117, 5187, 4438, 4150, 4179, 4213, 4504, null, null],
-        June: [6773, 7032, 7085, 7703, 7692, 6886, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [5251, 5436, 6382, 7033, 6694, 5750, 5688, 5122, 5266, 6518, 6736, 5919, 4369, 4297, 4143, 4531, 5259, 5843, 5114, 4371, 4331, 4464, 4773, 5943, 9737, 8460, 7030, 6505, 7481, 6997, null],
+        May: [5684, 5518, 6007, 6914, 7079, 6409, 6094, 6563, 6981, 6291, 5352, 5254, 4912, 5420, 6345, 7881, 6335, 4650, 4262, 4544, 4797, 5233, 6303, 6117, 5187, 4438, 4150, 4179, 4213, 4504, null],
+        June: [7174, 6773, 7032, 7085, 7703, 7692, 6886, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 5251.0,
-        May: 5684.0,
-        June: 7174.0,
+        April: 5848.1,
+        May: 5587.2,
+        June: 7192.14,
       },
     },
     "Retain": {
       cumul: {
-        April: [144606, 186940, 221666, 248741, 270597, 289756, 306458, 321378, 337370, 352849, 365255, 374539, 383011, 390589, 398369, 406661, 415110, 421962, 427597, 433065, 438359, 443806, 450531, 457498, 462936, 467229, 471364, 476023, 480112, null, null],
-        May: [117281, 163248, 212296, 247079, 274992, 298315, 320542, 341207, 357484, 370739, 382805, 393701, 403980, 415097, 426337, 434987, 441896, 448194, 454620, 460765, 467277, 474287, 480525, 485616, 490186, 494462, 498613, 503008, 507184, 510657, null],
-        June: [159111, 200922, 235150, 266665, 293850, 315410, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [92209, 144606, 186940, 221666, 248741, 270597, 289756, 306458, 321378, 337370, 352849, 365255, 374539, 383011, 390589, 398369, 406661, 415110, 421962, 427597, 433065, 438359, 443806, 450531, 457498, 462936, 467229, 471364, 476023, 480112, null],
+        May: [68959, 117281, 163248, 212296, 247079, 274992, 298315, 320542, 341207, 357484, 370739, 382805, 393701, 403980, 415097, 426337, 434987, 441896, 448194, 454620, 460765, 467277, 474287, 480525, 485616, 490186, 494462, 498613, 503008, 507184, 510657],
+        June: [101337, 159111, 200922, 235150, 266665, 293850, 315410, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [52397, 42334, 34726, 27075, 21856, 19159, 16702, 14920, 15992, 15479, 12406, 9284, 8472, 7578, 7780, 8292, 8449, 6852, 5635, 5468, 5294, 5447, 6725, 6967, 5438, 4293, 4135, 4659, 4089, null, null],
-        May: [48322, 45967, 49048, 34783, 27913, 23323, 22227, 20665, 16277, 13255, 12066, 10896, 10279, 11117, 11240, 8650, 6909, 6298, 6426, 6145, 6512, 7010, 6238, 5091, 4570, 4276, 4151, 4395, 4176, null, null],
-        June: [57774, 41811, 34228, 31515, 27185, 21560, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [92209, 52397, 42334, 34726, 27075, 21856, 19159, 16702, 14920, 15992, 15479, 12406, 9284, 8472, 7578, 7780, 8292, 8449, 6852, 5635, 5468, 5294, 5447, 6725, 6967, 5438, 4293, 4135, 4659, 4089, null],
+        May: [68959, 48322, 45967, 49048, 34783, 27913, 23323, 22227, 20665, 16277, 13255, 12066, 10896, 10279, 11117, 11240, 8650, 6909, 6298, 6426, 6145, 6512, 7010, 6238, 5091, 4570, 4276, 4151, 4395, 4176, null],
+        June: [101337, 57774, 41811, 34228, 31515, 27185, 21560, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 92209.0,
-        May: 68959.0,
-        June: 101337.0,
+        April: 16003.73,
+        May: 16906.13,
+        June: 45058.57,
       },
     },
   },
   Grab: {
     "NFPU": {
       cumul: {
-        April: [1701, 2676, 3691, 4732, 5616, 6729, 7784, 8922, 10186, 11575, 12976, 14160, 15298, 16397, 17697, 19178, 20759, 22361, 23721, 25112, 26607, 28186, 29949, 31821, 33670, 35310, 36951, 38689, 40345, null, null],
-        May: [1856, 2834, 3723, 5094, 6407, 7704, 9262, 10772, 12256, 13599, 14929, 16245, 17643, 19147, 20860, 22484, 23796, 25133, 26568, 28063, 29615, 31248, 33006, 34594, 36142, 37703, null, null, null, null, null],
-        June: [2072, 3394, 4772, 6213, 7642, 9080, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [814, 1701, 2676, 3691, 4732, 5616, 6729, 7784, 8922, 10186, 11575, 12976, 14160, 15298, 16397, 17697, 19178, 20759, 22361, 23721, 25112, 26607, 28186, 29949, 31821, 33670, 35310, 36951, 38689, 40345, null],
+        May: [937, 1856, 2834, 3723, 5094, 6407, 7704, 9262, 10772, 12256, 13599, 14929, 16245, 17643, 19147, 20860, 22484, 23796, 25133, 26568, 28063, 29615, 31248, 33006, 34594, 36142, 37703, null, null, null, null],
+        June: [1038, 2072, 3394, 4772, 6213, 7642, 9080, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [4200, 4675, 4799, 4521, 3842, 3723, 3458, 3532, 4610, 4540, 4204, 3095, 3208, 2925, 3060, 3593, 3940, 3543, 2878, 2792, 3004, 3381, 3944, 8345, 7389, 6158, 5561, 6061, 5653, null, null],
-        May: [4296, 4699, 4203, 4186, 4125, 4110, 4817, 4978, 4404, 3779, 3846, 3531, 3860, 4483, 4746, 4193, 3401, 3005, 3274, 3403, 3454, 4076, 3833, 3245, 3109, 3063, 3136, 3472, 3670, 3069, null],
-        June: [4814, 5495, 5400, 5943, 5520, 5137, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [3998, 4200, 4675, 4799, 4521, 3842, 3723, 3458, 3532, 4610, 4540, 4204, 3095, 3208, 2925, 3060, 3593, 3940, 3543, 2878, 2792, 3004, 3381, 3944, 8345, 7389, 6158, 5561, 6061, 5653, null],
+        May: [4580, 4296, 4699, 4203, 4186, 4125, 4110, 4817, 4978, 4404, 3779, 3846, 3531, 3860, 4483, 4746, 4193, 3401, 3005, 3274, 3403, 3454, 4076, 3833, 3245, 3109, 3063, 3136, 3472, 3670, 3069],
+        June: [5114, 4814, 5495, 5400, 5943, 5520, 5137, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       avgUplift: {
-        April: 3998.0,
-        May: 4580.0,
-        June: 5114.0,
+        April: 4287.73,
+        May: 3872.45,
+        June: 5346.14,
       },
     },
     "Retain": {
       cumul: {
-        April: [100112, 129353, 152617, 171615, 186972, 201173, 213426, 224351, 236166, 247363, 256775, 264030, 270687, 276577, 282578, 288803, 294991, 300215, 304495, 308536, 312540, 316692, 321588, 326361, 330382, 333689, 336762, 340090, 343134, null, null],
-        May: [81102, 111928, 143496, 166914, 186299, 203070, 219380, 234265, 246101, 255955, 265066, 273380, 281152, 289318, 297377, 304008, 309372, 314226, 319256, 323973, 328935, 334173, 338872, 342763, 346311, 349677, 353052, 356481, 359792, 362591, null],
-        June: [109139, 138772, 163043, 185320, 204115, 219312, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [62900, 100112, 129353, 152617, 171615, 186972, 201173, 213426, 224351, 236166, 247363, 256775, 264030, 270687, 276577, 282578, 288803, 294991, 300215, 304495, 308536, 312540, 316692, 321588, 326361, 330382, 333689, 336762, 340090, 343134, null],
+        May: [47988, 81102, 111928, 143496, 166914, 186299, 203070, 219380, 234265, 246101, 255955, 265066, 273380, 281152, 289318, 297377, 304008, 309372, 314226, 319256, 323973, 328935, 334173, 338872, 342763, 346311, 349677, 353052, 356481, 359792, 362591],
+        June: [68453, 109139, 138772, 163043, 185320, 204115, 219312, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [37212, 29241, 23264, 18998, 15357, 14201, 12253, 10925, 11815, 11197, 9412, 7255, 6657, 5890, 6001, 6225, 6188, 5224, 4280, 4041, 4004, 4152, 4896, 4773, 4021, 3307, 3073, 3328, 3044, null, null],
-        May: [33114, 30826, 31568, 23418, 19385, 16771, 16310, 14885, 11836, 9854, 9111, 8314, 7772, 8166, 8059, 6631, 5364, 4854, 5030, 4717, 4962, 5238, 4699, 3891, 3548, 3366, 3375, 3429, 3311, null, null],
-        June: [40686, 29633, 24271, 22277, 18795, 15197, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [62900, 37212, 29241, 23264, 18998, 15357, 14201, 12253, 10925, 11815, 11197, 9412, 7255, 6657, 5890, 6001, 6225, 6188, 5224, 4280, 4041, 4004, 4152, 4896, 4773, 4021, 3307, 3073, 3328, 3044, null],
+        May: [47988, 33114, 30826, 31568, 23418, 19385, 16771, 16310, 14885, 11836, 9854, 9111, 8314, 7772, 8166, 8059, 6631, 5364, 4854, 5030, 4717, 4962, 5238, 4699, 3891, 3548, 3366, 3375, 3429, 3311, null],
+        June: [68453, 40686, 29633, 24271, 22277, 18795, 15197, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 62900.0,
-        May: 47988.0,
-        June: 68453.0,
+        April: 11437.8,
+        May: 11993.07,
+        June: 31330.29,
       },
     },
   },
   GSM: {
     "NFPU": {
       cumul: {
-        April: [866, 1409, 2343, 3292, 4079, 4698, 5307, 5968, 6819, 7899, 8824, 9497, 10093, 10733, 11505, 12332, 13325, 14295, 15225, 16248, 17196, 18231, 19681, 21341, 22192, 22825, 23595, 24560, 25401, null, null],
-        May: [1499, 2295, 4275, 6122, 7453, 8670, 9809, 11189, 12607, 13733, 14870, 15912, 17120, 18712, 21603, 23577, 24253, 24889, 25626, 26663, 28226, 30351, 32658, 34680, 35906, 36751, 37631, 38532, 39599, 40402, null],
-        June: [2487, 3569, 4685, 5902, 7274, 8633, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [437, 866, 1409, 2343, 3292, 4079, 4698, 5307, 5968, 6819, 7899, 8824, 9497, 10093, 10733, 11505, 12332, 13325, 14295, 15225, 16248, 17196, 18231, 19681, 21341, 22192, 22825, 23595, 24560, 25401, null],
+        May: [723, 1499, 2295, 4275, 6122, 7453, 8670, 9809, 11189, 12607, 13733, 14870, 15912, 17120, 18712, 21603, 23577, 24253, 24889, 25626, 26663, 28226, 30351, 32658, 34680, 35906, 36751, 37631, 38532, 39599, 40402],
+        June: [1153, 2487, 3569, 4685, 5902, 7274, 8633, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [429, 543, 934, 949, 787, 619, 609, 661, 851, 1080, 925, 673, 596, 640, 772, 827, 993, 970, 930, 1023, 948, 1035, 1450, 1660, 851, 633, 770, 965, 841, null, null],
-        May: [776, 796, 1980, 1847, 1331, 1217, 1139, 1380, 1418, 1126, 1137, 1042, 1208, 1592, 2891, 1974, 676, 636, 737, 1037, 1563, 2125, 2307, 2022, 1226, 845, 880, 901, 1067, null, null],
-        June: [1334, 1082, 1116, 1217, 1372, 1359, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [437, 429, 543, 934, 949, 787, 619, 609, 661, 851, 1080, 925, 673, 596, 640, 772, 827, 993, 970, 930, 1023, 948, 1035, 1450, 1660, 851, 633, 770, 965, 841, null],
+        May: [723, 776, 796, 1980, 1847, 1331, 1217, 1139, 1380, 1418, 1126, 1137, 1042, 1208, 1592, 2891, 1974, 676, 636, 737, 1037, 1563, 2125, 2307, 2022, 1226, 845, 880, 901, 1067, null],
+        June: [1153, 1334, 1082, 1116, 1217, 1372, 1359, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 437.0,
-        May: 723.0,
-        June: 1153.0,
+        April: 846.7,
+        May: 1319.97,
+        June: 1233.29,
       },
     },
     "Churn": {
       cumul: {
-        April: [2882, 4479, 7400, 10212, 12387, 14281, 15987, 17863, 20258, 23145, 25480, 27034, 28416, 29903, 31453, 33323, 35496, 37322, 38710, 40039, 41426, 42844, 44902, 47250, 49543, 51259, 52829, 55283, 57519, null, null],
-        May: [3780, 5980, 9456, 12442, 14751, 16740, 18674, 20868, 22987, 24712, 26361, 27843, 29722, 32345, 36242, 38927, 40850, 42564, 44393, 46223, 48241, 51001, 53751, 56127, 57942, 59607, 61420, 62910, 64403, 65485, null],
-        June: [5458, 7783, 10133, 12531, 15769, 18366, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [1429, 2882, 4479, 7400, 10212, 12387, 14281, 15987, 17863, 20258, 23145, 25480, 27034, 28416, 29903, 31453, 33323, 35496, 37322, 38710, 40039, 41426, 42844, 44902, 47250, 49543, 51259, 52829, 55283, 57519, null],
+        May: [1768, 3780, 5980, 9456, 12442, 14751, 16740, 18674, 20868, 22987, 24712, 26361, 27843, 29722, 32345, 36242, 38927, 40850, 42564, 44393, 46223, 48241, 51001, 53751, 56127, 57942, 59607, 61420, 62910, 64403, 65485],
+        June: [2700, 5458, 7783, 10133, 12531, 15769, 18366, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [1453, 1597, 2921, 2812, 2175, 1894, 1706, 1876, 2395, 2887, 2335, 1554, 1382, 1487, 1550, 1870, 2173, 1826, 1388, 1329, 1387, 1418, 2058, 2348, 2293, 1716, 1570, 2454, 2236, null, null],
-        May: [2012, 2200, 3476, 2986, 2309, 1989, 1934, 2194, 2119, 1725, 1649, 1482, 1879, 2623, 3897, 2685, 1923, 1714, 1829, 1830, 2018, 2760, 2750, 2376, 1815, 1665, 1813, 1490, 1493, null, null],
-        June: [2758, 2325, 2350, 2398, 3238, 2597, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [1429, 1453, 1597, 2921, 2812, 2175, 1894, 1706, 1876, 2395, 2887, 2335, 1554, 1382, 1487, 1550, 1870, 2173, 1826, 1388, 1329, 1387, 1418, 2058, 2348, 2293, 1716, 1570, 2454, 2236, null],
+        May: [1768, 2012, 2200, 3476, 2986, 2309, 1989, 1934, 2194, 2119, 1725, 1649, 1482, 1879, 2623, 3897, 2685, 1923, 1714, 1829, 1830, 2018, 2760, 2750, 2376, 1815, 1665, 1813, 1490, 1493, null],
+        June: [2700, 2758, 2325, 2350, 2398, 3238, 2597, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 1429.0,
-        May: 1768.0,
-        June: 2700.0,
+        April: 1917.3,
+        May: 2146.77,
+        June: 2623.71,
       },
     },
     "Retain": {
       cumul: {
-        April: [25075, 33441, 41440, 47447, 52015, 55633, 59012, 62341, 66221, 70346, 73384, 75420, 77344, 79124, 80891, 83083, 85381, 87077, 88482, 89866, 91242, 92744, 94964, 97090, 98348, 99217, 100234, 101670, 102765, null, null],
-        May: [22024, 31857, 43258, 50641, 56399, 61151, 65585, 70168, 73854, 76878, 79725, 82273, 84810, 88039, 91362, 93537, 95276, 96780, 98405, 99891, 101611, 103681, 105453, 106937, 108196, 109317, 110534, 111853, 113332, 114355, null],
-        June: [31905, 41022, 48914, 56403, 63683, 69456, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [15686, 25075, 33441, 41440, 47447, 52015, 55633, 59012, 62341, 66221, 70346, 73384, 75420, 77344, 79124, 80891, 83083, 85381, 87077, 88482, 89866, 91242, 92744, 94964, 97090, 98348, 99217, 100234, 101670, 102765, null],
+        May: [12003, 22024, 31857, 43258, 50641, 56399, 61151, 65585, 70168, 73854, 76878, 79725, 82273, 84810, 88039, 91362, 93537, 95276, 96780, 98405, 99891, 101611, 103681, 105453, 106937, 108196, 109317, 110534, 111853, 113332, 114355],
+        June: [19951, 31905, 41022, 48914, 56403, 63683, 69456, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [9389, 8366, 7999, 6007, 4568, 3618, 3379, 3329, 3880, 4125, 3038, 2036, 1924, 1780, 1767, 2192, 2298, 1696, 1405, 1384, 1376, 1502, 2220, 2126, 1258, 869, 1017, 1436, 1095, null, null],
-        May: [10021, 9833, 11401, 7383, 5758, 4752, 4434, 4583, 3686, 3024, 2847, 2548, 2537, 3229, 3323, 2175, 1739, 1504, 1625, 1486, 1720, 2070, 1772, 1484, 1259, 1121, 1217, 1319, 1479, null, null],
-        June: [11954, 9117, 7892, 7489, 7280, 5773, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [15686, 9389, 8366, 7999, 6007, 4568, 3618, 3379, 3329, 3880, 4125, 3038, 2036, 1924, 1780, 1767, 2192, 2298, 1696, 1405, 1384, 1376, 1502, 2220, 2126, 1258, 869, 1017, 1436, 1095, null],
+        May: [12003, 10021, 9833, 11401, 7383, 5758, 4752, 4434, 4583, 3686, 3024, 2847, 2548, 2537, 3229, 3323, 2175, 1739, 1504, 1625, 1486, 1720, 2070, 1772, 1484, 1259, 1121, 1217, 1319, 1479, null],
+        June: [19951, 11954, 9117, 7892, 7489, 7280, 5773, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 15686.0,
-        May: 12003.0,
-        June: 19951.0,
+        April: 3425.5,
+        May: 3777.73,
+        June: 9922.29,
       },
     },
   },
   Be: {
     "NFPU": {
       cumul: {
-        April: [412, 762, 1071, 1386, 1696, 1982, 2314, 2603, 2960, 3304, 3625, 3896, 4145, 4416, 4693, 5025, 5324, 5607, 5834, 6064, 6341, 6648, 7134, 7572, 7866, 8138, 8438, 8825, 9165, null, null],
-        May: [354, 552, 780, 1061, 1320, 1629, 1950, 2275, 2564, 2888, 3200, 3494, 3782, 4145, 4569, 4857, 5187, 5464, 5750, 6038, 6397, 6728, 7086, 7467, 7775, 8076, 8427, 8810, 9202, 47779, null],
-        June: [569, 811, 1102, 1391, 1699, 1939, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [162, 412, 762, 1071, 1386, 1696, 1982, 2314, 2603, 2960, 3304, 3625, 3896, 4145, 4416, 4693, 5025, 5324, 5607, 5834, 6064, 6341, 6648, 7134, 7572, 7866, 8138, 8438, 8825, 9165, null],
+        May: [164, 354, 552, 780, 1061, 1320, 1629, 1950, 2275, 2564, 2888, 3200, 3494, 3782, 4145, 4569, 4857, 5187, 5464, 5750, 6038, 6397, 6728, 7086, 7467, 7775, 8076, 8427, 8810, 9202, 47779],
+        June: [309, 569, 811, 1102, 1391, 1699, 1939, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [250, 350, 309, 315, 310, 286, 332, 289, 357, 344, 321, 271, 249, 271, 277, 332, 299, 283, 227, 230, 277, 307, 486, 438, 294, 272, 300, 387, 340, null, null],
-        May: [190, 198, 228, 281, 259, 309, 321, 325, 289, 324, 312, 294, 288, 363, 424, 288, 330, 277, 286, 288, 359, 331, 358, 381, 308, 301, 351, 383, 392, null, null],
-        June: [260, 242, 291, 289, 308, 240, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [162, 250, 350, 309, 315, 310, 286, 332, 289, 357, 344, 321, 271, 249, 271, 277, 332, 299, 283, 227, 230, 277, 307, 486, 438, 294, 272, 300, 387, 340, null],
+        May: [164, 190, 198, 228, 281, 259, 309, 321, 325, 289, 324, 312, 294, 288, 363, 424, 288, 330, 277, 286, 288, 359, 331, 358, 381, 308, 301, 351, 383, 392, null],
+        June: [309, 260, 242, 291, 289, 308, 240, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 162.0,
-        May: 164.0,
-        June: 309.0,
+        April: 305.5,
+        May: 306.73,
+        June: 277.0,
       },
     },
     "Churn": {
       cumul: {
-        April: [2756, 4754, 6691, 8562, 10251, 11917, 13566, 15136, 16856, 18519, 19916, 20996, 21940, 22913, 24104, 25779, 27395, 28676, 29857, 31007, 32032, 33332, 35246, 36777, 38070, 39195, 40434, 41982, 43351, null, null],
-        May: [2243, 3780, 5498, 7320, 9140, 10920, 12767, 14787, 16435, 17734, 18900, 20118, 21321, 22782, 24493, 25835, 27025, 28086, 29277, 30585, 31982, 33479, 34935, 36142, 37136, 38063, 39115, 40433, 41730, 42772, null],
-        June: [3882, 5537, 7158, 9247, 11168, 12710, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [1214, 2756, 4754, 6691, 8562, 10251, 11917, 13566, 15136, 16856, 18519, 19916, 20996, 21940, 22913, 24104, 25779, 27395, 28676, 29857, 31007, 32032, 33332, 35246, 36777, 38070, 39195, 40434, 41982, 43351, null],
+        May: [1105, 2243, 3780, 5498, 7320, 9140, 10920, 12767, 14787, 16435, 17734, 18900, 20118, 21321, 22782, 24493, 25835, 27025, 28086, 29277, 30585, 31982, 33479, 34935, 36142, 37136, 38063, 39115, 40433, 41730, 42772],
+        June: [1972, 3882, 5537, 7158, 9247, 11168, 12710, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [1542, 1998, 1937, 1871, 1689, 1666, 1649, 1570, 1720, 1663, 1397, 1080, 944, 973, 1191, 1675, 1616, 1281, 1181, 1150, 1025, 1300, 1914, 1531, 1293, 1125, 1239, 1548, 1369, null, null],
-        May: [1138, 1537, 1718, 1822, 1820, 1780, 1847, 2020, 1648, 1299, 1166, 1218, 1203, 1461, 1711, 1342, 1190, 1061, 1191, 1308, 1397, 1497, 1456, 1207, 994, 927, 1052, 1318, 1297, null, null],
-        June: [1910, 1655, 1621, 2089, 1921, 1542, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [1214, 1542, 1998, 1937, 1871, 1689, 1666, 1649, 1570, 1720, 1663, 1397, 1080, 944, 973, 1191, 1675, 1616, 1281, 1181, 1150, 1025, 1300, 1914, 1531, 1293, 1125, 1239, 1548, 1369, null],
+        May: [1105, 1138, 1537, 1718, 1822, 1820, 1780, 1847, 2020, 1648, 1299, 1166, 1218, 1203, 1461, 1711, 1342, 1190, 1061, 1191, 1308, 1397, 1497, 1456, 1207, 994, 927, 1052, 1318, 1297, null],
+        June: [1972, 1910, 1655, 1621, 2089, 1921, 1542, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 1214.0,
-        May: 1105.0,
-        June: 1972.0,
+        April: 1445.03,
+        May: 1391.0,
+        June: 1815.71,
       },
     },
     "Retain": {
       cumul: {
-        April: [20740, 28150, 34086, 38732, 42933, 46530, 49594, 52348, 55176, 57840, 59951, 61592, 62968, 64265, 65755, 67642, 69469, 70880, 72076, 73317, 74409, 75760, 77389, 78759, 79824, 80779, 81777, 83004, 83946, null, null],
-        May: [12802, 19305, 27687, 34116, 39331, 43610, 47879, 51678, 54500, 56784, 58802, 60637, 62378, 64418, 66365, 67926, 69277, 70483, 71739, 73027, 74280, 75563, 76777, 77744, 78558, 79383, 80170, 81192, 82112, 82848, null],
-        June: [19062, 24341, 28692, 33222, 37097, 40065, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [12689, 20740, 28150, 34086, 38732, 42933, 46530, 49594, 52348, 55176, 57840, 59951, 61592, 62968, 64265, 65755, 67642, 69469, 70880, 72076, 73317, 74409, 75760, 77389, 78759, 79824, 80779, 81777, 83004, 83946, null],
+        May: [7102, 12802, 19305, 27687, 34116, 39331, 43610, 47879, 51678, 54500, 56784, 58802, 60637, 62378, 64418, 66365, 67926, 69277, 70483, 71739, 73027, 74280, 75563, 76777, 77744, 78558, 79383, 80170, 81192, 82112, 82848],
+        June: [11867, 19062, 24341, 28692, 33222, 37097, 40065, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       },
       uplift: {
-        April: [8051, 7410, 5936, 4646, 4201, 3597, 3064, 2754, 2828, 2664, 2111, 1641, 1376, 1297, 1490, 1887, 1827, 1411, 1196, 1241, 1092, 1351, 1629, 1370, 1065, 955, 998, 1227, 942, null, null],
-        May: [5700, 6503, 8382, 6429, 5215, 4279, 4269, 3799, 2822, 2284, 2018, 1835, 1741, 2040, 1947, 1561, 1351, 1206, 1256, 1288, 1253, 1283, 1214, 967, 814, 825, 787, 1022, 920, null, null],
-        June: [7195, 5279, 4351, 4530, 3875, 2968, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+        April: [12689, 8051, 7410, 5936, 4646, 4201, 3597, 3064, 2754, 2828, 2664, 2111, 1641, 1376, 1297, 1490, 1887, 1827, 1411, 1196, 1241, 1092, 1351, 1629, 1370, 1065, 955, 998, 1227, 942, null],
+        May: [7102, 5700, 6503, 8382, 6429, 5215, 4279, 4269, 3799, 2822, 2284, 2018, 1835, 1741, 2040, 1947, 1561, 1351, 1206, 1256, 1288, 1253, 1283, 1214, 967, 814, 825, 787, 1022, 920, null],
+        June: [11867, 7195, 5279, 4351, 4530, 3875, 2968, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null],
       },
       avgUplift: {
-        April: 12689.0,
-        May: 7102.0,
-        June: 11867.0,
+        April: 2798.2,
+        May: 2737.07,
+        June: 5723.57,
       },
     },
   },
@@ -633,6 +633,30 @@ function renderCardsAll(m) {
   const segColors = ['#4ade80','#60a5fa','#a78bfa'];
   const el = document.getElementById('cards');
   el.innerHTML='';
+
+  // MPU Total card
+  let mpuJune=0, mpuMay=0, mpuLastDay=0;
+  let mpuJU=0, mpuMU=0;
+  segs.forEach(s=>{
+    if(!ALL_DATA[m][s]) return;
+    const d=ALL_DATA[m][s];
+    const lastDay=getLastDaySeg(m,s);
+    mpuLastDay=Math.max(mpuLastDay,lastDay);
+    if(d.cumul.June[lastDay-1]!=null) mpuJune+=d.cumul.June[lastDay-1];
+    if(d.cumul.May[lastDay-1]!=null) mpuMay+=d.cumul.May[lastDay-1];
+    if(d.uplift.June[lastDay-1]!=null) mpuJU+=d.uplift.June[lastDay-1];
+    if(d.uplift.May[lastDay-1]!=null) mpuMU+=d.uplift.May[lastDay-1];
+  });
+  const mpuG=(mpuMay>0)?(mpuJune/mpuMay-1):null;
+  const mpuUG=(mpuMU>0)?(mpuJU/mpuMU-1):null;
+  const mpuCls=mpuG==null?'delta-neutral':(mpuG>=0?'delta-up':'delta-down');
+  el.innerHTML+=`<div class="card" style="border-top:2px solid #ffffff">
+    <div class="card-label">MPU Total D${mpuLastDay}</div>
+    <div class="card-value" style="color:#ffffff">${fmt(mpuJune)}</div>
+    <div class="card-sub">May D${mpuLastDay}: ${fmt(mpuMay)} | Uplift: ${fmt(mpuJU)}</div>
+    <span class="delta-badge ${mpuCls}">${mpuG>=0?'▲':'▼'} ${mpuG!=null?fmtPct(mpuG):'—'} vs May</span>
+  </div>`;
+
   segs.forEach((s,si)=>{
     if(!ALL_DATA[m][s]) return;
     const d=ALL_DATA[m][s];
@@ -640,7 +664,6 @@ function renderCardsAll(m) {
     const jC=d.cumul.June[lastDay-1], mC=d.cumul.May[lastDay-1];
     const gMay=(jC!=null&&mC)?(jC/mC-1):null;
     const jU=d.uplift.June[lastDay-1], mU=d.uplift.May[lastDay-1];
-    const uG=(jU!=null&&mU)?(jU/mU-1):null;
     const isGood=gMay!=null?gMay>=0:null;
     const cls=isGood==null?'delta-neutral':(isGood?'delta-up':'delta-down');
     const arrow=gMay==null?'':(gMay>=0?'▲':'▼');
@@ -661,18 +684,40 @@ function renderChartsAll(m) {
     {key:'Retain', label:'Retain', color:'#a78bfa'},
   ];
   // Cumulative chart - 3 lines for June only, with May dashed
+  // Compute MPU total (sum of 3 segments) per day
+  const mpuMay = Array(31).fill(null);
+  const mpuJune = Array(31).fill(null);
+  const mpuLastDay = Math.max(...segDefs.map(sd=>getLastDaySeg(m,sd.key)));
+  segDefs.forEach(sd=>{
+    if(!ALL_DATA[m][sd.key]) return;
+    const d=ALL_DATA[m][sd.key];
+    d.cumul.May.forEach((v,i)=>{ if(v!=null) mpuMay[i]=(mpuMay[i]||0)+v; });
+    d.cumul.June.forEach((v,i)=>{ if(v!=null) mpuJune[i]=(mpuJune[i]||0)+v; });
+  });
+
   const datasets = [];
+  // MPU total line first (prominent)
+  datasets.push({
+    label:'MPU Total May', data:mpuMay, borderColor:'#ffffff',
+    borderWidth:1.2, pointRadius:0, borderDash:[4,3], tension:.3, spanGaps:false
+  });
+  datasets.push({
+    label:'MPU Total', data:mpuJune.map((v,i)=>i<mpuLastDay?v:null),
+    borderColor:'#ffffff', borderWidth:3,
+    pointRadius:ctx=>ctx.dataIndex===mpuLastDay-1?5:0,
+    pointBackgroundColor:'#ffffff', tension:.3, spanGaps:false,
+  });
   segDefs.forEach(sd=>{
     if(!ALL_DATA[m][sd.key]) return;
     const d=ALL_DATA[m][sd.key];
     const lastDay=getLastDaySeg(m,sd.key);
     datasets.push({
       label:sd.label+' May', data:d.cumul.May, borderColor:sd.color,
-      borderWidth:1.2, pointRadius:0, borderDash:[4,3], tension:.3, spanGaps:false, opacity:.4
+      borderWidth:1, pointRadius:0, borderDash:[4,3], tension:.3, spanGaps:false
     });
     datasets.push({
       label:sd.label, data:d.cumul.June.map((v,i)=>i<lastDay?v:null),
-      borderColor:sd.color, borderWidth:2.5,
+      borderColor:sd.color, borderWidth:2,
       pointRadius:ctx=>ctx.dataIndex===lastDay-1?4:0,
       pointBackgroundColor:sd.color, tension:.3, spanGaps:false,
     });
@@ -733,10 +778,11 @@ function renderChartsAll(m) {
 }
 
 function renderTableAll(m) {
-  const segs = [{key:'NFPU',label:'NFPU',cls:'c-pos'},{key:'Churn',label:'Resurrect',cls:'c-may'},{key:'Retain',label:'Retain',cls:'c-june'}];
+  const segs = [{key:'NFPU',label:'NFPU',color:'#4ade80'},{key:'Churn',label:'Resurrect',color:'#60a5fa'},{key:'Retain',label:'Retain',color:'#a78bfa'}];
   document.getElementById('tableHead').innerHTML=`<tr>
     <th>Day</th>
-    ${segs.map(s=>`<th>${s.label} Jun</th><th>${s.label} May</th><th>%</th>`).join('')}
+    <th style="color:#fff">MPU Jun</th><th style="color:#fff">MPU May</th><th style="color:#fff">MPU%</th>
+    ${segs.map(s=>`<th style="color:${s.color}">${s.label} Jun</th><th style="color:${s.color}">${s.label} May</th><th style="color:${s.color}">%</th><th style="color:${s.color}">Uplift Jun</th><th style="color:${s.color}">Uplift May</th>`).join('')}
   </tr>`;
   const body=document.getElementById('tableBody');
   body.innerHTML='';
@@ -744,7 +790,22 @@ function renderTableAll(m) {
   for(let i=0;i<maxDay;i++){
     const tr=document.createElement('tr');
     let isLast=false;
+    // MPU total
+    let mpuJ=0, mpuM=0, mpuJvalid=false;
+    segs.forEach(s=>{
+      if(!ALL_DATA[m][s.key]) return;
+      const d=ALL_DATA[m][s.key];
+      const lastDay=getLastDaySeg(m,s.key);
+      const jC=i<lastDay?d.cumul.June[i]:null;
+      const mC=d.cumul.May[i];
+      if(jC!=null){mpuJ+=jC;mpuJvalid=true;}
+      if(mC!=null) mpuM+=mC;
+    });
+    const mpuG=(mpuJvalid&&mpuM)?(mpuJ/mpuM-1):null;
     let cells=`<td>${i+1}</td>`;
+    cells+=`<td style="color:#ffffff">${mpuJvalid?fmt(mpuJ):'—'}</td>`;
+    cells+=`<td style="color:#4a5e78">${mpuM?fmt(mpuM):'—'}</td>`;
+    cells+=`<td class="${mpuG==null?'':(mpuG>=0?'c-pos':'c-neg')}">${mpuG!=null?fmtPct(mpuG):'—'}</td>`;
     segs.forEach(s=>{
       if(!ALL_DATA[m][s.key]){cells+=`<td>—</td><td>—</td><td>—</td>`;return;}
       const d=ALL_DATA[m][s.key];
@@ -753,9 +814,13 @@ function renderTableAll(m) {
       const jC=i<lastDay?d.cumul.June[i]:null;
       const mC=d.cumul.May[i];
       const g=(jC!=null&&mC)?(jC/mC-1):null;
-      cells+=`<td class="${s.cls}">${jC!=null?fmt(jC):'—'}</td>`;
-      cells+=`<td class="c-april">${mC!=null?fmt(mC):'—'}</td>`;
+      const jU2=i<lastDay?d.uplift.June[i]:null;
+      const mU2=d.uplift.May[i];
+      cells+=`<td style="color:#e2e8f0">${jC!=null?fmt(jC):'—'}</td>`;
+      cells+=`<td style="color:#4a5e78">${mC!=null?fmt(mC):'—'}</td>`;
       cells+=`<td class="${g==null?'':(g>=0?'c-pos':'c-neg')}">${g!=null?fmtPct(g):'—'}</td>`;
+      cells+=`<td style="color:#e2e8f0">${jU2!=null?fmt(jU2):'—'}</td>`;
+      cells+=`<td style="color:#4a5e78">${mU2!=null?fmt(mU2):'—'}</td>`;
     });
     tr.innerHTML=cells;
     if(isLast) tr.className='hl';
